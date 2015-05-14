@@ -10,6 +10,7 @@ my @check_queue = ();   # libs to check
 my %checked_libs = ();    # libs already checked.
 my %result = ();    # result
 my $lib;      # current dependency library
+my $code = 0;
 
 $ENV{"LC_CTYPE"}="C";   # we match against English output of ldd
 
@@ -37,8 +38,10 @@ while (@check_queue) {
       or $line =~ /linux-[(vdso)[(32)?|(64)?]|(gate)].so.1/) { # included by the kernel (@zzmp)
       next;
     } elsif ($line =~ /not found/) {
+      $code = 1;
       print STDERR "$to_check: $line\n";
     } else {
+      $code = 1;
       print STDERR "no match for '$line'\n";
     }
   }
@@ -49,5 +52,5 @@ for (sort keys %result) {
   print $_, "\n";
 }
 
-exit 0;
+exit "$code";
 
